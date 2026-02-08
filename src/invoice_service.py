@@ -1,3 +1,26 @@
+from dataclasses import dataclass
+from typing import List, Optional, Dict, Tuple
+
+
+@dataclass
+class LineItem:
+    sku: str
+    category: str
+    unit_price: float
+    qty: int
+    fragile: bool = False
+
+
+@dataclass
+class Invoice:
+    invoice_id: str
+    customer_id: str
+    country: str
+    membership: str
+    coupon: Optional[str]
+    items: List[LineItem]
+
+
 class InvoiceService:
     def __init__(self) -> None:
         self._coupon_rate: Dict[str, float] = {
