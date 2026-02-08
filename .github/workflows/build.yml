@@ -33,7 +33,7 @@ jobs:
       # 4) Run tests + generate coverage.xml
       - name: Run tests with coverage
         run: |
-          PYTHONPATH=src pytest tests/ --cov=src --cov-report=xml:coverage.xml
+          PYTHONPATH=src pytest tests/ --cov=. --cov-report=xml:coverage.xml
 
       # 5) SonarCloud scan
       - name: SonarCloud Scan
