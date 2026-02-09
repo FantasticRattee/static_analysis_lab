@@ -50,7 +50,7 @@ def test_thailand_shipping_low_subtotal():
         coupon=None,
         items=[LineItem(sku="B", category="electronics", unit_price=100.0, qty=2)]
     )
-    total, warnings = service.compute_total(inv)
+    total, _ = service.compute_total(inv)
     assert total > 200  # 200 subtotal + 60 shipping + tax - no discount
 
 def test_thailand_shipping_high_subtotal():
@@ -64,7 +64,7 @@ def test_thailand_shipping_high_subtotal():
         coupon=None,
         items=[LineItem(sku="C", category="food", unit_price=100.0, qty=6)]
     )
-    total, warnings = service.compute_total(inv)
+    total, _ = service.compute_total(inv)
     assert total > 600  # 600 subtotal + 0 shipping + tax
 
 def test_japan_shipping():
@@ -78,7 +78,7 @@ def test_japan_shipping():
         coupon=None,
         items=[LineItem(sku="D", category="book", unit_price=1000.0, qty=5)]
     )
-    total, warnings = service.compute_total(inv)
+    total, _ = service.compute_total(inv)
     assert total > 5000  # 5000 subtotal + 0 shipping (>= 4000) + tax
 
 def test_usa_shipping_tiered():
@@ -92,7 +92,7 @@ def test_usa_shipping_tiered():
         coupon=None,
         items=[LineItem(sku="E", category="electronics", unit_price=50.0, qty=3)]
     )
-    total, warnings = service.compute_total(inv)
+    total, _ = service.compute_total(inv)
     assert total > 150  # 150 subtotal + 8 shipping + tax
 
 def test_gold_membership_discount():
@@ -106,7 +106,7 @@ def test_gold_membership_discount():
         coupon=None,
         items=[LineItem(sku="F", category="book", unit_price=100.0, qty=10)]
     )
-    total, warnings = service.compute_total(inv)
+    total, _ = service.compute_total(inv)
     # 1000 subtotal * 0.03 = 30 discount, shipping 0
     assert total < 1100  # after discount and tax
 
@@ -121,7 +121,7 @@ def test_platinum_membership_discount():
         coupon=None,
         items=[LineItem(sku="G", category="food", unit_price=100.0, qty=10)]
     )
-    total, warnings = service.compute_total(inv)
+    total, _ = service.compute_total(inv)
     # 1000 subtotal * 0.05 = 50 discount
     assert total < 1100
 
@@ -136,7 +136,7 @@ def test_coupon_valid():
         coupon="WELCOME10",
         items=[LineItem(sku="H", category="electronics", unit_price=100.0, qty=5)]
     )
-    total, warnings = service.compute_total(inv)
+    total, _ = service.compute_total(inv)
     # 500 subtotal * 0.10 = 50 coupon discount
     assert total < 550  # after discount and tax
 
@@ -151,7 +151,7 @@ def test_coupon_invalid():
         coupon="INVALID99",
         items=[LineItem(sku="I", category="book", unit_price=100.0, qty=3)]
     )
-    total, warnings = service.compute_total(inv)
+    _, warnings = service.compute_total(inv)
     assert "Unknown coupon" in warnings
 
 def test_fragile_items_fee():
@@ -165,7 +165,7 @@ def test_fragile_items_fee():
         coupon=None,
         items=[LineItem(sku="GLASS", category="electronics", unit_price=100.0, qty=2, fragile=True)]
     )
-    total, warnings = service.compute_total(inv)
+    total, _ = service.compute_total(inv)
     # 200 subtotal + 10 fragile_fee (5*2) + shipping + tax
     assert total > 210
 
@@ -180,7 +180,7 @@ def test_high_subtotal_membership_upgrade_warning():
         coupon=None,
         items=[LineItem(sku="BULK", category="book", unit_price=100.0, qty=150)]
     )
-    total, warnings = service.compute_total(inv)
+    _, warnings = service.compute_total(inv)
     # 15000 subtotal > 10000 and membership is none → warning
     assert "Consider membership upgrade" in warnings
 
@@ -195,7 +195,7 @@ def test_high_subtotal_platinum_no_warning():
         coupon=None,
         items=[LineItem(sku="BULK2", category="electronics", unit_price=100.0, qty=150)]
     )
-    total, warnings = service.compute_total(inv)
+    _, warnings = service.compute_total(inv)
     assert "Consider membership upgrade" not in warnings
 
 def test_missing_invoice_id():
@@ -279,7 +279,7 @@ def test_vip_coupon():
         coupon="VIP20",
         items=[LineItem(sku="ITEM", category="book", unit_price=100.0, qty=5)]
     )
-    total, warnings = service.compute_total(inv)
+    total, _ = service.compute_total(inv)
     # 500 * 0.20 = 100 discount
     assert total < 450
 
@@ -294,6 +294,6 @@ def test_student_coupon():
         coupon="STUDENT5",
         items=[LineItem(sku="BOOK", category="book", unit_price=100.0, qty=4)]
     )
-    total, warnings = service.compute_total(inv)
+    total, _ = service.compute_total(inv)
     # 400 subtotal * 0.05 = 20 discount, JP shipping 600 + tax
     assert total > 1000  # 400 + 600 + tax - 20
